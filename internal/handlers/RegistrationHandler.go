@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"go-app/internal/db"
-	"go-app/internal/middleware"
+	"go-app/internal/helper"
 	"go-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"io"
@@ -50,7 +50,7 @@ func RegisterUser(c echo.Context) error {
 		return err
 	}
 
-	token, err := middleware.GenerateToken(user.ID)
+	token, err := helper.GenerateToken(user.ID)
 	if err != nil {
 		return err
 	}

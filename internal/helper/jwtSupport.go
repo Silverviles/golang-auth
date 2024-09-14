@@ -1,4 +1,4 @@
-package middleware
+package helper
 
 import (
 	"github.com/dgrijalva/jwt-go"

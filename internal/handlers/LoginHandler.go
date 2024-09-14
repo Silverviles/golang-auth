@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"go-app/internal/db"
-	"go-app/internal/middleware"
+	"go-app/internal/helper"
 	"go-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"io"
@@ -31,7 +31,7 @@ func LoginUser(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, "Invalid credentials")
 	}
 
-	token, err := middleware.GenerateToken(existingUser.ID)
+	token, err := helper.GenerateToken(existingUser.ID)
 	if err != nil {
 		return err
 	}
