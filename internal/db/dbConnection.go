@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DatabaseConfig struct {
@@ -27,14 +29,14 @@ func GetDatabaseConnection() *sql.DB {
 		return nil
 	}
 	connectionInfo := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		configuration.Host,
-		configuration.Port,
+		"%s:%s@tcp(%s:%s)/%s",
 		configuration.User,
 		configuration.Password,
+		configuration.Host,
+		configuration.Port,
 		configuration.DbName,
 	)
-	dbConnection, err := sql.Open("postgres", connectionInfo)
+	dbConnection, err := sql.Open("mysql", connectionInfo)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
 	}
