@@ -12,8 +12,8 @@ import (
 )
 
 func LoginUser(c echo.Context) error {
-	var user models.UserDTO
-	var existingUser models.UserDTO
+	var user models.UserDao
+	var hashedPassword string
 	body, _ := io.ReadAll(c.Request().Body)
 	err := json.Unmarshal(body, &user)
 	if err != nil {
@@ -21,25 +21,25 @@ func LoginUser(c echo.Context) error {
 	}
 
 	DB := db.GetDatabaseConnection()
-	userSQLStatement := "SELECT * FROM users WHERE username = $1"
-	err = DB.QueryRow(userSQLStatement, user.Username).Scan(&existingUser.Username, &existingUser.Password)
+	userSQLStatement := "SELECT id, password, email FROM users WHERE username = ?"
+	err = DB.QueryRow(userSQLStatement, user.Username).Scan(&user.ID, &hashedPassword, &user.Email)
 	if err != nil {
 		return err
 	}
 
-	if bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password)) != nil {
+	if bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(user.Password)) != nil {
 		return c.JSON(http.StatusUnauthorized, "Invalid credentials")
 	}
 
-	token, err := helper.GenerateToken(existingUser.ID)
+	token, err := helper.GenerateToken(user.ID)
 	if err != nil {
 		return err
 	}
 
 	response := models.UserDTO{
-		ID:       existingUser.ID,
-		Username: existingUser.Username,
-		Email:    existingUser.Email,
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
 		Token:    token,
 	}
 
