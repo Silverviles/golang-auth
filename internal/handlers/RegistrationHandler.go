@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"go-app/internal/db"
+	"go-app/internal/middleware"
 	"go-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"io"
@@ -49,6 +50,16 @@ func RegisterUser(c echo.Context) error {
 		return err
 	}
 
-	response := c.JSON(http.StatusOK, user)
-	return response
+	token, err := middleware.GenerateToken(user.ID)
+	if err != nil {
+		return err
+	}
+
+	response := models.UserDTO{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Token:    token,
+	}
+	return c.JSON(http.StatusCreated, response)
 }

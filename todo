@@ -1,0 +1,4 @@
+sanitize inputs
+separate queries from logic
+define valid error constants
+use error struct instead of general http errors
