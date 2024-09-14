@@ -1,0 +1,33 @@
+/myapp
+├── /cmd                 # Application entry points
+│   └── /myapp           # Main executable for the app
+│       └── main.go      # Main entry point for the app
+├── /internal            # Private application and library code
+│   ├── /config          # Configuration settings
+│   │   └── config.go
+│   ├── /server          # HTTP server-related code
+│   │   └── server.go
+│   ├── /db              # Database logic
+│   │   ├── migrations   # Database migration files
+│   │   └── db.go        # DB connection and utilities
+│   ├── /handlers        # HTTP handlers for each resource
+│   │   ├── user.go
+│   │   └── product.go
+│   ├── /middleware      # Middleware functions for the app
+│   │   └── auth.go
+│   ├── /models          # Domain models (structs) for data entities
+│   │   ├── user.go
+│   │   └── product.go
+│   └── /services        # Business logic services
+│       ├── user_service.go
+│       └── product_service.go
+├── /pkg                 # Public reusable packages
+│   └── /utils           # Utility functions that are shared across the app
+│       └── logger.go
+├── /api                 # API definition files (OpenAPI/Swagger specs, etc.)
+│   └── api.yaml
+├── /scripts             # Scripts for setup, maintenance, or devops
+│   └── migrate.sh       # Example of a DB migration script
+├── go.mod               # Dependency tracking for Go modules
+├── go.sum               # Checksums for Go modules
+└── README.md            # Project overview and documentation
