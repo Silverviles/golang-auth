@@ -1,4 +1,4 @@
-package helper
+package middleware
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 )
 
 func LoadQueries() (map[string]string, error) {
-	filePath := constants.QUERY_PATH
+	filePath := constants.QueryPath
 	queries := make(map[string]string)
 
 	file, err := os.Open(filePath)

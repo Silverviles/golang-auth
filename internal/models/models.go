@@ -1,14 +1,17 @@
 package models
 
+import "go-app/internal/constants"
+
 type UserDao struct {
-	ID          int    `json:"id"`
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Phone       string `json:"phone"`
-	DateCreated string `json:"date_created"`
+	ID          int            `json:"id"`
+	Username    string         `json:"username"`
+	Password    string         `json:"password"`
+	FirstName   string         `json:"first_name"`
+	LastName    string         `json:"last_name"`
+	Email       string         `json:"email"`
+	Phone       string         `json:"phone"`
+	DateCreated string         `json:"date_created"`
+	Role        constants.Role `json:"role"`
 }
 
 type UserDTO struct {

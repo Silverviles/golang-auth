@@ -1,4 +1,4 @@
-package helper
+package middleware
 
 import (
 	"github.com/dgrijalva/jwt-go"
@@ -21,16 +21,17 @@ func GenerateToken(userID int) (string, error) {
 	return tokenString, nil
 }
 
-func ValidateToken(tokenString string) (string, error) {
+func ValidateToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	claims := token.Claims.(jwt.MapClaims)
-	userID := claims["userID"].(string)
+	if !token.Valid {
+		return nil, jwt.NewValidationError("Invalid token", jwt.ValidationErrorSignatureInvalid)
+	}
 
-	return userID, nil
+	return token, nil
 }

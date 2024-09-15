@@ -1,8 +1,9 @@
 package services
 
 import (
+	"go-app/internal/constants"
 	"go-app/internal/db"
-	"go-app/internal/helper"
+	"go-app/internal/middleware"
 	"go-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -44,9 +45,10 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, err
 	}
 	user.Password = string(hashedPassword)
+	user.Role = constants.Role(string(constants.User))
 
-	insertUserSQL := "INSERT INTO users (username, password, first_name, last_name, email, phone, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	result, err := DB.Exec(insertUserSQL, user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated)
+	insertUserSQL := "INSERT INTO users (username, password, first_name, last_name, email, phone, date_created, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+	result, err := DB.Exec(insertUserSQL, user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated, user.Role)
 	if err != nil {
 		err := transaction.Rollback()
 		return nil, err
@@ -58,7 +60,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, err
 	}
 
-	token, err := helper.GenerateToken(int(lastInsertedID))
+	token, err := middleware.GenerateToken(int(lastInsertedID))
 	if err != nil {
 		err := transaction.Rollback()
 		return nil, err
@@ -98,7 +100,7 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, nil
 	}
 
-	token, err := helper.GenerateToken(user.ID)
+	token, err := middleware.GenerateToken(user.ID)
 	if err != nil {
 		return nil, err
 	}

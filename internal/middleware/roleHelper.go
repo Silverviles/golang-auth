@@ -1,0 +1,47 @@
+package middleware
+
+import (
+	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo/v4"
+	"net/http"
+	"strings"
+)
+
+func CheckRole(role string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			authHeader := c.Request().Header.Get("Authorization")
+			if authHeader == "" {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Missing or invalid token")
+			}
+
+			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+			if tokenString == authHeader {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Missing or invalid token")
+			}
+
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, echo.NewHTTPError(http.StatusUnauthorized, "Unexpected signing method")
+				}
+				return []byte("your-secret-key"), nil
+			})
+
+			if err != nil || !token.Valid {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
+			}
+
+			claims, ok := token.Claims.(jwt.MapClaims)
+			if !ok || !token.Valid {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token claims")
+			}
+
+			userRole, ok := claims["role"].(string)
+			if !ok || userRole != role {
+				return echo.NewHTTPError(http.StatusForbidden, "Forbidden")
+			}
+
+			return next(c)
+		}
+	}
+}
