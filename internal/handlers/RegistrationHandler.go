@@ -3,13 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/labstack/echo/v4"
-	"go-app/internal/db"
-	"go-app/internal/helper"
 	"go-app/internal/models"
-	"golang.org/x/crypto/bcrypt"
+	"go-app/internal/services"
 	"io"
 	"net/http"
-	"time"
 )
 
 func RegisterUser(c echo.Context) error {
@@ -20,46 +17,10 @@ func RegisterUser(c echo.Context) error {
 		return err
 	}
 
-	DB := db.GetDatabaseConnection()
-	var count int
-	countSQLStatement := "SELECT COUNT(*) FROM users WHERE username = ?"
-	err = DB.QueryRow(countSQLStatement, user.Username).Scan(&count)
+	registeredUser, err := services.RegisterUser(&user)
 	if err != nil {
 		return err
 	}
 
-	if count > 0 {
-		return c.JSON(http.StatusConflict, "User already exists")
-	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-
-	user.Password = string(hash)
-	user.DateCreated = time.Now().Format("2006-01-02 15:04:05")
-
-	insertSQLStatement, err := DB.Prepare("INSERT INTO users (username, password, first_name, last_name, email, phone, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)")
-	if err != nil {
-		return err
-	}
-
-	_, err = insertSQLStatement.Exec(user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated)
-	if err != nil {
-		return err
-	}
-
-	token, err := helper.GenerateToken(user.ID)
-	if err != nil {
-		return err
-	}
-
-	response := models.UserDTO{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Token:    token,
-	}
-	return c.JSON(http.StatusCreated, response)
+	return c.JSON(http.StatusCreated, registeredUser)
 }
