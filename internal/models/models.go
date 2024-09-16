@@ -15,14 +15,22 @@ type UserDao struct {
 }
 
 type UserDTO struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Token    string `json:"token"`
+	ID       int            `json:"id"`
+	Username string         `json:"username"`
+	Email    string         `json:"email"`
+	Role     constants.Role `json:"role"`
+	Token    string         `json:"token"`
 }
 
 type Error struct {
 	ResponseCode int    `json:"response_code"`
 	MessageCode  string `json:"message_code"`
 	Message      string `json:"message"`
+}
+
+type Product struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
 }

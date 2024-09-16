@@ -2,8 +2,8 @@ package services
 
 import (
 	"go-app/internal/constants"
+	"go-app/internal/customMiddleware"
 	"go-app/internal/db"
-	"go-app/internal/middleware"
 	"go-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -45,7 +45,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, err
 	}
 	user.Password = string(hashedPassword)
-	user.Role = constants.Role(string(constants.User))
+	user.Role = constants.User
 
 	insertUserSQL := "INSERT INTO users (username, password, first_name, last_name, email, phone, date_created, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	result, err := DB.Exec(insertUserSQL, user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated, user.Role)
@@ -60,7 +60,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, err
 	}
 
-	token, err := middleware.GenerateToken(int(lastInsertedID))
+	token, err := customMiddleware.GenerateToken(int(lastInsertedID))
 	if err != nil {
 		err := transaction.Rollback()
 		return nil, err
@@ -90,8 +90,8 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 	}
 
 	var hashedPassword string
-	userSQLStatement := "SELECT id, password, email FROM users WHERE username = ?"
-	err = DB.QueryRow(userSQLStatement, user.Username).Scan(&user.ID, &hashedPassword, &user.Email)
+	userSQLStatement := "SELECT id, password, email, role FROM users WHERE username = ?"
+	err = DB.QueryRow(userSQLStatement, user.Username).Scan(&user.ID, &hashedPassword, &user.Email, &user.Role)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, nil
 	}
 
-	token, err := middleware.GenerateToken(user.ID)
+	token, err := customMiddleware.GenerateToken(user.ID)
 	if err != nil {
 		return nil, err
 	}
