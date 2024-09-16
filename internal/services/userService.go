@@ -60,7 +60,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, err
 	}
 
-	token, err := customMiddleware.GenerateToken(int(lastInsertedID))
+	token, err := customMiddleware.GenerateToken(int(lastInsertedID), string(user.Role))
 	if err != nil {
 		err := transaction.Rollback()
 		return nil, err
@@ -100,7 +100,7 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 		return nil, nil
 	}
 
-	token, err := customMiddleware.GenerateToken(user.ID)
+	token, err := customMiddleware.GenerateToken(user.ID, string(user.Role))
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +109,7 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
+		Role:     user.Role,
 		Token:    token,
 	}
 
