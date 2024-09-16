@@ -25,7 +25,7 @@ func CheckRole(role string) echo.MiddlewareFunc {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, echo.NewHTTPError(http.StatusUnauthorized, "Unexpected signing method")
 				}
-				return os.Getenv("JWT_SECRET"), nil
+				return []byte(os.Getenv("JWT_SECRET")), nil
 			})
 
 			if err != nil || !token.Valid {

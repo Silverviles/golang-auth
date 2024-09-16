@@ -37,7 +37,7 @@ func main() {
 	adminGroup.Use(customMiddleware.CheckRole("admin"))
 	adminGroup.GET("/products", handlers.GetProducts)
 	adminGroup.GET("/products/:id", handlers.GetProductByID)
-	adminGroup.POST("/products", handlers.AddProduct)
+	adminGroup.POST("/addProducts", handlers.AddProduct)
 	adminGroup.PUT("/products/:id", handlers.UpdateProduct)
 	adminGroup.DELETE("/products/:id", handlers.DeleteProduct)
 
