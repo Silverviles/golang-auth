@@ -3,3 +3,4 @@ go.mod
 go.sum
 
 internal/config/config.json
+.env
