@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -24,7 +25,7 @@ func CheckRole(role string) echo.MiddlewareFunc {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, echo.NewHTTPError(http.StatusUnauthorized, "Unexpected signing method")
 				}
-				return []byte("your-secret-key"), nil
+				return os.Getenv("JWT_SECRET"), nil
 			})
 
 			if err != nil || !token.Valid {

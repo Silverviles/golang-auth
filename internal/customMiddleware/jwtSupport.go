@@ -2,10 +2,9 @@ package customMiddleware
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"os"
 	"time"
 )
-
-var jwtSecret = []byte("secret")
 
 func GenerateToken(userID int, userRole string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -14,7 +13,7 @@ func GenerateToken(userID int, userRole string) (string, error) {
 	claims["role"] = userRole
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return "", err
 	}
@@ -24,7 +23,7 @@ func GenerateToken(userID int, userRole string) (string, error) {
 
 func ValidateToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		return os.Getenv("JWT_SECRET"), nil
 	})
 	if err != nil {
 		return nil, err

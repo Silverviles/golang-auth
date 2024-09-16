@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go-app/internal/constants"
 	"go-app/internal/customMiddleware"
 	"go-app/internal/handlers"
 	"net/http"
@@ -11,6 +13,11 @@ import (
 
 func main() {
 	e := echo.New()
+
+	err := godotenv.Load(constants.EnvironmentVariablePath)
+	if err != nil {
+		e.Logger.Fatal("Error loading .env file")
+	}
 
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
