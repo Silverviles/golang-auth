@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go-app/internal/customMiddleware"
@@ -14,7 +15,7 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 	}))
 
 	e.POST("/register", handlers.RegisterUser)
