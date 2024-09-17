@@ -13,8 +13,7 @@ func AddProduct(product *models.Product) (*models.Product, error) {
 		return nil, err
 	}
 
-	insertProductSQL := "INSERT INTO products (name, description, price) VALUES (?, ?, ?)"
-	result, err := DB.Exec(insertProductSQL, product.Name, product.Description, product.Price)
+	result, err := DB.Exec(db.InsertProductSQL, product.Name, product.Description, product.Price)
 	if err != nil {
 		return nil, err
 	}
@@ -36,8 +35,7 @@ func AddProduct(product *models.Product) (*models.Product, error) {
 func GetProducts() ([]models.Product, error) {
 	DB := db.GetDatabaseConnection()
 
-	selectProductsSQL := "SELECT * FROM products"
-	rows, err := DB.Query(selectProductsSQL)
+	rows, err := DB.Query(db.SelectProductsSQL)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +57,7 @@ func GetProducts() ([]models.Product, error) {
 func GetProductByID(productID int) (*models.Product, error) {
 	DB := db.GetDatabaseConnection()
 
-	selectProductSQL := "SELECT * FROM products WHERE id = ?"
-	row := DB.QueryRow(selectProductSQL, productID)
+	row := DB.QueryRow(db.SelectProductByIDSQL, productID)
 
 	var product models.Product
 	err := row.Scan(&product.ID, &product.Name, &product.Description, &product.Price)
@@ -79,8 +76,7 @@ func UpdateProduct(product *models.Product) (*models.Product, error) {
 		return nil, err
 	}
 
-	updateProductSQL := "UPDATE products SET name = ?, description = ?, price = ? WHERE id = ?"
-	_, err = DB.Exec(updateProductSQL, product.Name, product.Description, product.Price, product.ID)
+	_, err = DB.Exec(db.UpdateProductSQL, product.Name, product.Description, product.Price, product.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,8 +97,7 @@ func DeleteProduct(productID int) error {
 		return err
 	}
 
-	deleteProductSQL := "DELETE FROM products WHERE id = ?"
-	_, err = DB.Exec(deleteProductSQL, productID)
+	_, err = DB.Exec(db.DeleteProductSQL, productID)
 	if err != nil {
 		return err
 	}

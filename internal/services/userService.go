@@ -13,8 +13,7 @@ func isUserExists(username string) (bool, error) {
 	DB := db.GetDatabaseConnection()
 
 	var count int
-	countSQLStatement := "SELECT COUNT(*) FROM users WHERE username = ?"
-	err := DB.QueryRow(countSQLStatement, username).Scan(&count)
+	err := DB.QueryRow(db.CountUserSQL, username).Scan(&count)
 	if err != nil {
 		return false, err
 	}
@@ -47,8 +46,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 	user.Password = string(hashedPassword)
 	user.Role = constants.User
 
-	insertUserSQL := "INSERT INTO users (username, password, first_name, last_name, email, phone, date_created, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-	result, err := DB.Exec(insertUserSQL, user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated, user.Role)
+	result, err := DB.Exec(db.InsertUserSQL, user.Username, user.Password, user.FirstName, user.LastName, user.Email, user.Phone, user.DateCreated, user.Role)
 	if err != nil {
 		err := transaction.Rollback()
 		return nil, err
@@ -70,6 +68,7 @@ func RegisterUser(user *models.UserDao) (*models.UserDTO, error) {
 		ID:       int(lastInsertedID),
 		Username: user.Username,
 		Email:    user.Email,
+		Role:     user.Role,
 		Token:    token,
 	}
 
@@ -90,8 +89,7 @@ func LoginUser(user *models.UserDao) (*models.UserDTO, error) {
 	}
 
 	var hashedPassword string
-	userSQLStatement := "SELECT id, password, email, role FROM users WHERE username = ?"
-	err = DB.QueryRow(userSQLStatement, user.Username).Scan(&user.ID, &hashedPassword, &user.Email, &user.Role)
+	err = DB.QueryRow(db.SelectUserSQL, user.Username).Scan(&user.ID, &hashedPassword, &user.Email, &user.Role)
 	if err != nil {
 		return nil, err
 	}

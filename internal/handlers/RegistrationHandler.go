@@ -18,7 +18,7 @@ func RegisterUser(c echo.Context) error {
 	}
 
 	registeredUser, err := services.RegisterUser(&user)
-	if err != nil {
+	if err != nil || registeredUser == nil {
 		return err
 	}
 

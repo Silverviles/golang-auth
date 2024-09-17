@@ -44,7 +44,7 @@ func main() {
 	e.GET("/products", handlers.GetProducts, customMiddleware.CheckRole([]string{"user", "admin"}))
 	e.GET("/products/:id", handlers.GetProductByID, customMiddleware.CheckRole([]string{"user", "admin"}))
 
-	e.POST("/products", handlers.AddProduct, customMiddleware.CheckRole([]string{"admin"}))
+	e.POST("/addProduct", handlers.AddProduct, customMiddleware.CheckRole([]string{"admin"}))
 	e.PUT("/products/:id", handlers.UpdateProduct, customMiddleware.CheckRole([]string{"admin"}))
 	e.DELETE("/products/:id", handlers.DeleteProduct, customMiddleware.CheckRole([]string{"admin"}))
 

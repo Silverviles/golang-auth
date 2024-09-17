@@ -1,7 +1,0 @@
-USER_SELECT_QUERY=SELECT id, password, email FROM users WHERE username = ?
-USER_EXISTS_QUERY=SELECT count(*) FROM users WHERE username = ?
-USER_INSERT_QUERY=INSERT INTO users (username, password, first_name, last_name, email, phone, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)
-USER_UPDATE_PASSWORD_QUERY=UPDATE users SET password = ? WHERE id = ?
-USER_UPDATE_EMAIL_QUERY=UPDATE users SET email = ? WHERE id = ?
-USER_UPDATE_PHONE_QUERY=UPDATE users SET phone = ? WHERE id = ?
-USER_DELETE_QUERY=DELETE FROM users WHERE id = ?
