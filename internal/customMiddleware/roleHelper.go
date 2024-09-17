@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func CheckRole(role string) echo.MiddlewareFunc {
+func CheckRole(roles []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
@@ -38,8 +38,13 @@ func CheckRole(role string) echo.MiddlewareFunc {
 			}
 
 			userRole, ok := claims["role"].(string)
-			if !ok || userRole != role {
+			if !ok {
 				return echo.NewHTTPError(http.StatusForbidden, "Forbidden")
+			}
+			for _, role := range roles {
+				if userRole == role {
+					return next(c)
+				}
 			}
 
 			return next(c)

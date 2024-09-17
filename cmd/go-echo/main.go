@@ -41,12 +41,12 @@ func main() {
 	//adminGroup.PUT("/products/:id", handlers.UpdateProduct)
 	//adminGroup.DELETE("/products/:id", handlers.DeleteProduct)
 
-	e.GET("/products", handlers.GetProducts, customMiddleware.CheckRole("user"))
-	e.GET("/products/:id", handlers.GetProductByID, customMiddleware.CheckRole("user"))
+	e.GET("/products", handlers.GetProducts, customMiddleware.CheckRole([]string{"user", "admin"}))
+	e.GET("/products/:id", handlers.GetProductByID, customMiddleware.CheckRole([]string{"user", "admin"}))
 
-	e.POST("/products", handlers.AddProduct, customMiddleware.CheckRole("admin"))
-	e.PUT("/products/:id", handlers.UpdateProduct, customMiddleware.CheckRole("admin"))
-	e.DELETE("/products/:id", handlers.DeleteProduct, customMiddleware.CheckRole("admin"))
+	e.POST("/products", handlers.AddProduct, customMiddleware.CheckRole([]string{"admin"}))
+	e.PUT("/products/:id", handlers.UpdateProduct, customMiddleware.CheckRole([]string{"admin"}))
+	e.DELETE("/products/:id", handlers.DeleteProduct, customMiddleware.CheckRole([]string{"admin"}))
 
 	s := &http.Server{
 		Addr: ":8080",
